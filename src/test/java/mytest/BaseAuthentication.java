@@ -8,7 +8,6 @@ import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
 import pojo.LoginRequestPojo;
 import pojo.LoginResponsePojo;
 
@@ -56,9 +55,6 @@ public class BaseAuthentication {
 
 
     }
-    @Test
-    public void checkPrinting() {
-        System.out.println(accessToken);
-    }
+
 }
 
