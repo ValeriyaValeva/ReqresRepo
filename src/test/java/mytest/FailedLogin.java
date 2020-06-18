@@ -33,7 +33,7 @@ public class FailedLogin {
     }
 
     @Test
-    public void createNewUpType() {
+    public void missingPass() {
 
         LoginBodyPojo loginBodyPojo = new LoginBodyPojo();
         loginBodyPojo.setEmail("peter@klaven");
@@ -51,8 +51,97 @@ public class FailedLogin {
         LoginErrorMessagePojo loginErrorMessagePojo = response.as(LoginErrorMessagePojo.class);
         SoftAssert softAssert = new SoftAssert();
         softAssert.assertEquals(response.statusCode(), 400);    //Hard assert?
-        softAssert.assertEquals(loginErrorMessagePojo.getError(), ErrorMessageConstants.ERR_MISSING_CRED);
+        softAssert.assertEquals(loginErrorMessagePojo.getError(), ErrorMessageConstants.ERR_MISSING_PASS);
 
+
+    }
+    @Test
+    public void missingUsername() {
+        LoginBodyPojo loginBodyPojo = new LoginBodyPojo();
+        loginBodyPojo.setPassword("cityslicka");
+
+        RestAssuredResponseImpl response = (RestAssuredResponseImpl) given()
+                .spec(requestSpec)
+                .body(loginBodyPojo)
+                .when()
+                .post(BasePaths.LOGIN_ENDPOINT);
+
+        response
+                .then()
+                .spec(responseSpec);
+
+        LoginErrorMessagePojo loginErrorMessagePojo = response.as(LoginErrorMessagePojo.class);
+        SoftAssert softAssert = new SoftAssert();
+        softAssert.assertEquals(response.statusCode(), 400);    //Hard assert?
+        softAssert.assertEquals(loginErrorMessagePojo.getError(), ErrorMessageConstants.ERR_MISSING_USER);
+        softAssert.assertAll();
+    }
+
+    @Test
+    public void missingCredentials() {
+        LoginBodyPojo loginBodyPojo = new LoginBodyPojo();
+        loginBodyPojo.setEmail("");
+        loginBodyPojo.setPassword("");
+
+        RestAssuredResponseImpl response = (RestAssuredResponseImpl) given()
+                .spec(requestSpec)
+                .body(loginBodyPojo)
+                .when()
+                .post(BasePaths.LOGIN_ENDPOINT);
+
+        response
+                .then()
+                .spec(responseSpec);
+
+        LoginErrorMessagePojo loginErrorMessagePojo = response.as(LoginErrorMessagePojo.class);
+        SoftAssert softAssert = new SoftAssert();
+        softAssert.assertEquals(response.statusCode(), 400);    //Hard assert?
+        softAssert.assertEquals(loginErrorMessagePojo.getError(), ErrorMessageConstants.ERR_MISSING_USER);
+
+    }
+
+    @Test
+    public void wrongUser() {
+        LoginBodyPojo loginBodyPojo = new LoginBodyPojo();
+        loginBodyPojo.setEmail("even.bolt@reqres.in");
+        loginBodyPojo.setPassword("cityslicka");
+
+        RestAssuredResponseImpl response = (RestAssuredResponseImpl) given()
+                .spec(requestSpec)
+                .body(loginBodyPojo)
+                .when()
+                .post(BasePaths.LOGIN_ENDPOINT);
+
+        response
+                .then()
+                .spec(responseSpec);
+
+        LoginErrorMessagePojo loginErrorMessagePojo = response.as(LoginErrorMessagePojo.class);
+        SoftAssert softAssert = new SoftAssert();
+        softAssert.assertEquals(response.statusCode(), 400);    //Hard assert?
+        softAssert.assertEquals(loginErrorMessagePojo.getError(), ErrorMessageConstants.ERR_WRONG_USER);
+
+    }
+    @Test
+    public void wrongPass() {
+        LoginBodyPojo loginBodyPojo = new LoginBodyPojo();
+        loginBodyPojo.setEmail("eve.holt@reqres.in");
+        loginBodyPojo.setPassword("townslicka");
+
+        RestAssuredResponseImpl response = (RestAssuredResponseImpl) given()
+                .spec(requestSpec)
+                .body(loginBodyPojo)
+                .when()
+                .post(BasePaths.LOGIN_ENDPOINT);
+
+        response
+                .then()
+                .spec(responseSpec);
+
+        LoginErrorMessagePojo loginErrorMessagePojo = response.as(LoginErrorMessagePojo.class);
+        SoftAssert softAssert = new SoftAssert();
+        softAssert.assertEquals(response.statusCode(), 400);    //Hard assert?
+        softAssert.assertEquals(loginErrorMessagePojo.getError(), ErrorMessageConstants.ERR_WRONG_USER);
         softAssert.assertAll();
     }
 }

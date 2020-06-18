@@ -14,7 +14,7 @@ import pojo.NewUserRequestPojo;
 
 import static io.restassured.RestAssured.given;
 
-public class CreateNewUser extends BaseAuthentication {
+public class UpdateUser extends BaseAuthentication {
     private RequestSpecification requestSpec;
     private ResponseSpecification responseSpec;
 
@@ -33,18 +33,18 @@ public class CreateNewUser extends BaseAuthentication {
     }
 
     @Test
-    public void createNewUser() {
+    public void updateUser() {
 
-        NewUserRequestPojo newUser = new NewUserRequestPojo(
+        NewUserRequestPojo updateUser = new NewUserRequestPojo(
                 "morpheus",
-                "leader"
+                "zion resident"
         );
 
         RestAssuredResponseImpl response = (RestAssuredResponseImpl) given()
                 .spec(requestSpec)
-                .body(newUser)
+                .body(updateUser)
                 .when()
-                .post(BasePaths.CREATE_NEW_USER);
+                .put(BasePaths.UPDATE_USER);
 
         response
                 .then()
@@ -52,9 +52,9 @@ public class CreateNewUser extends BaseAuthentication {
 
         NewUserErrorMessagePojo newUserErrorMessagePojo = response.as(NewUserErrorMessagePojo.class);
         SoftAssert softAssert = new SoftAssert();
-        softAssert.assertEquals(response.statusCode(), 201);    //Hard assert?
-        softAssert.assertEquals(newUserErrorMessagePojo.getName(), newUser.getName());
-        softAssert.assertEquals(newUserErrorMessagePojo.getJob(), newUser.getJob());
+        softAssert.assertEquals(response.statusCode(), 200);    //Hard assert?
+        softAssert.assertEquals(newUserErrorMessagePojo.getName(), updateUser.getName());
+        softAssert.assertEquals(newUserErrorMessagePojo.getJob(), updateUser.getJob());
         //softAssert.assertEquals(newUserErrorMessagePojo.getCreatedAt(), "");
 
         softAssert.assertAll();
