@@ -9,12 +9,11 @@ import io.restassured.specification.ResponseSpecification;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
-import pojo.NewUserErrorMessagePojo;
-import pojo.NewUserRequestPojo;
+import pojo.ReadUserPojo;
 
 import static io.restassured.RestAssured.given;
 
-public class UpdateUser extends BaseAuthentication {
+public class ReadUser extends BaseAuthentication {
     private RequestSpecification requestSpec;
     private ResponseSpecification responseSpec;
 
@@ -33,28 +32,24 @@ public class UpdateUser extends BaseAuthentication {
     }
 
     @Test
-    public void updateUser() {
+    public void readUser() {
 
-        NewUserRequestPojo updateUser = new NewUserRequestPojo(
-                "morpheus",
-                "zion resident"
-        );
 
         RestAssuredResponseImpl response = (RestAssuredResponseImpl) given()
                 .spec(requestSpec)
-                .body(updateUser)
                 .when()
-                .put(BasePaths.UPDATE_USER);
+                .get(BasePaths.UPDATE_USER);
 
         response
                 .then()
                 .spec(responseSpec);
 
-        NewUserErrorMessagePojo newUserErrorMessagePojo = response.as(NewUserErrorMessagePojo.class);
+        ReadUserPojo readUserPojo  = response.as(ReadUserPojo.class);
+        response.prettyPrint();
         SoftAssert softAssert = new SoftAssert();
         softAssert.assertEquals(response.statusCode(), 200);    //Hard assert?
-        softAssert.assertEquals(newUserErrorMessagePojo.getName(), updateUser.getName());
-        softAssert.assertEquals(newUserErrorMessagePojo.getJob(), updateUser.getJob());
+        softAssert.assertEquals(readUserPojo.getData().get("id").getAsInt(), 2);
+        softAssert.assertEquals(readUserPojo.getData().get("email").getAsString(), "janet.weaver@reqres.in");
 
         softAssert.assertAll();
     }
